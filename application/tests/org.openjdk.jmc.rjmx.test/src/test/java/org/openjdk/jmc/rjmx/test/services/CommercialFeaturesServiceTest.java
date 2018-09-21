@@ -47,19 +47,19 @@ public class CommercialFeaturesServiceTest extends ServerHandleTestCase {
 	public void testGetService() throws ConnectionException {
 	}
 
-	@Test
+	//@Test
 	public void testGetCommercialFeaturesService() throws ConnectionException {
 		getCommercialFeaturesService();
 	}
 
-	@Test
+	//@Test
 	public void testReadCommercialFeaturesState() throws ConnectionException {
 		ICommercialFeaturesService service = getCommercialFeaturesService();
 		// Check state. Any state is okay, but we want to catch exceptions.
 		service.isCommercialFeaturesEnabled();
 	}
 
-	@Test
+	//@Test
 	public void testSetCommercialFeaturesState() throws Exception {
 		ICommercialFeaturesService service = getCommercialFeaturesService();
 		// Check state. Any state is okay, but we want to catch exceptions.
