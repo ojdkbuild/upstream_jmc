@@ -284,7 +284,7 @@ Here is an example for Mac OS X:
 target/products/org.openjdk.jmc/macosx/cocoa/x86_64/JDK\ Mission\ Control.app/Contents/MacOS/jmc -vm $JAVA_HOME/bin
 ```
 
-Here is an Linux example:
+Here is an example for Linux:
 
 ```bash
 target/products/org.openjdk.jmc/linux/gtk/x86_64/jmc -vm $JAVA_HOME/bin
@@ -293,11 +293,34 @@ target/products/org.openjdk.jmc/linux/gtk/x86_64/jmc -vm $JAVA_HOME/bin
 And here is an example for Windows x64:
 
 ```bash
-missioncontrol\target\products\org.openjdk.jmc\win32\win32\x86_64\jmc.exe -vm %JAVA_HOME%\bin
+target\products\org.openjdk.jmc\win32\win32\x86_64\jmc.exe -vm %JAVA_HOME%\bin
+```
+
+## Using the Built JMC Update Site in Eclipse
+As part of the JMC build, the JMC update sites will be built. 
+
+There is one update site for the stand-alone RCP application, providing plug-ins for the stand-alone release of JMC:
+
+```bash
+application/org.openjdk.jmc.updatesite.rcp/target/
+```
+
+There is another update site for the Eclipse plug-ins, providing plug-ins for running JMC inside of Eclipse:
+
+```bash
+application/org.openjdk.jmc.updatesite.ide/target/
+```
+
+To install it into Eclipe, simply open Eclipse and select Help | Install New Software... In the dialog, click Add... and then click the Archive... button. Select the built update site, e.g. 
+
+```bash
+application/org.openjdk.jmc.updatesite.ide/target/org.openjdk.jmc.updatesite.ide-7.0.0-SNAPSHOT.zip
 ```
 
 ## Setting Up for Development and Launching in Eclipse
-First make sure that you have installed the Mercurial Plug-in for Eclipse (MercurialEclipse). It can be installed from the Eclipse Marketplace (Help | Eclipse Marketplace...). At the time of writing, version 2.2 was the most recent one.
+First make sure that you have a recent version of Eclipse. An Eclipse 2018-09 with the JDK 11 plug-in installed (available from Eclipse Marketplace) will do. You may also want to install the Mercurial Plug-in for Eclipse (MercurialEclipse). The Eclipse Marketplace is available under **Help | Eclipse Marketplace...**.
+
+To set Eclipse up for JMC development, do the following:
 
 1. First ensure that you have started the jetty server in the first step of building JMC.
 2. Next open (File | Open...) the Eclipse target platform of interest, for example releng/platform-definitions/platform-definition-photon/platform.target

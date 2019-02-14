@@ -43,5 +43,6 @@
 	<modules>
 		<module>platform-definition-oxygen</module>
 		<module>platform-definition-photon</module>
+		<module>platform-definition-2018-09</module>
 	</modules>
 </project>

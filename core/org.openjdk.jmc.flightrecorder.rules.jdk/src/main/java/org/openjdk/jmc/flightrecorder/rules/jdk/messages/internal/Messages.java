@@ -199,6 +199,10 @@ public class Messages {
 	public static final String ExceptionRule_RULE_NAME = "ExceptionRule_RULE_NAME"; //$NON-NLS-1$
 	public static final String ExceptionRule_TEXT_INFO_LONG = "ExceptionRule_TEXT_INFO_LONG"; //$NON-NLS-1$
 	public static final String ExceptionRule_TEXT_MESSAGE = "ExceptionRule_TEXT_MESSAGE"; //$NON-NLS-1$
+	public static final String FatalErrorRule_RULE_NAME = "FatalErrorRule_RULE_NAME"; //$NON-NLS-1$
+	public static final String FatalErrorRule_TEXT_OK = "FatalErrorRule_TEXT_OK"; //$NON-NLS-1$
+	public static final String FatalErrorRule_TEXT_INFO = "FatalErrorRule_TEXT_INFO"; //$NON-NLS-1$
+	public static final String FatalErrorRule_TEXT_WARN = "FatalErrorRule_TEXT_WARN"; //$NON-NLS-1$
 	public static final String FasttimeRule_TEXT_WARN = "FasttimeRule_TEXT_WARN"; //$NON-NLS-1$
 	public static final String FasttimeRule_TEXT_WARN_LONG = "FasttimeRule_TEXT_WARN_LONG"; //$NON-NLS-1$
 	public static final String FewSampledThreadsRule_AGGR_SAMPLES_PER_THREAD = "FewSampledThreadsRule_AGGR_SAMPLES_PER_THREAD"; //$NON-NLS-1$
@@ -242,6 +246,11 @@ public class Messages {
 	public static final String FlightRecordingSupportRule_TEXT_OK = "FlightRecordingSupportRule_TEXT_OK"; //$NON-NLS-1$
 	public static final String FlightRecordingSupportRule_UNSUPPORTED_TEXT_WARN_LONG = "FlightRecordingSupportRule_UNSUPPORTED_TEXT_WARN_LONG"; //$NON-NLS-1$
 	public static final String FlightRecordingSupportRule_UNSUPPORTED_TEXT_WARN_SHORT = "FlightRecordingSupportRule_UNSUPPORTED_TEXT_WARN_SHORT"; //$NON-NLS-1$
+	public static final String FullGcRule_RULE_NAME="FullGcRule_RULE_NAME"; //$NON-NLS-1$
+	public static final String FullGcRule_OTHER_COLLECTOR_IN_USE="FullGcRule_OTHER_COLLECTOR_IN_USE"; //$NON-NLS-1$
+	public static final String FullGcRule_FULL_GC_OCCURRED_TITLE="FullGcRule_FULL_GC_OCCURRED_TITLE"; //$NON-NLS-1$
+	public static final String FullGcRule_FULL_GC_OCCURRED_DESC="FullGcRule_FULL_GC_OCCURRED_DESC"; //$NON-NLS-1$
+	public static final String FullGcRule_NO_FULL_GC_OCCURRED="FullGcRule_NO_FULL_GC_OCCURRED"; //$NON-NLS-1$
 	public static final String GcFreedRatioRule_FEW_GCS_LIMIT = "GcFreedRatioRule_FEW_GCS_LIMIT"; //$NON-NLS-1$
 	public static final String GcFreedRatioRule_FEW_GCS_LIMIT_DESC = "GcFreedRatioRule_FEW_GCS_LIMIT_DESC"; //$NON-NLS-1$
 	public static final String GcFreedRatioRule_GC_FREED_RATIO_INFO_LIMIT = "GcFreedRatioRule_GC_FREED_RATIO_INFO_LIMIT"; //$NON-NLS-1$
@@ -298,7 +307,6 @@ public class Messages {
 	public static final String HighGcRuleFactory_RULE_NAME = "HighGcRuleFactory_RULE_NAME"; //$NON-NLS-1$
 	public static final String HighGcRuleFactory_TEXT_INFO = "HighGcRuleFactory_TEXT_INFO"; //$NON-NLS-1$
 	public static final String HighGcRuleFactory_TEXT_INFO_LONG = "HighGcRuleFactory_TEXT_INFO_LONG"; //$NON-NLS-1$
-	public static final String HighGcRuleFactory_TEXT_INFO_LONG_ALLOC_DISABLED = "HighGcRuleFactory_TEXT_INFO_LONG_ALLOC_DISABLED"; //$NON-NLS-1$
 	public static final String HighGcRuleFactory_TEXT_OK = "HighGcRuleFactory_TEXT_OK"; //$NON-NLS-1$
 	public static final String HighJvmCpuRule_AGGR_MAX_ENDTIME = "HighJvmCpuRule_AGGR_MAX_ENDTIME"; //$NON-NLS-1$
 	public static final String HighJvmCpuRule_AGGR_MIN_ENDTIME = "HighJvmCpuRule_AGGR_MIN_ENDTIME"; //$NON-NLS-1$
@@ -393,6 +401,8 @@ public class Messages {
 	public static final String MethodProfilingRule_RULE_NAME = "MethodProfilingRule_RULE_NAME"; //$NON-NLS-1$
 	public static final String MethodProfilingRule_WINDOW_SIZE = "MethodProfilingRule_WINDOW_SIZE"; //$NON-NLS-1$
 	public static final String MethodProfilingRule_WINDOW_SIZE_DESC = "MethodProfilingRule_WINDOW_SIZE_DESC"; //$NON-NLS-1$
+	public static final String MethodProfilingRule_EXCLUDED_PACKAGES = "MethodProfilingRule_EXCLUDED_PACKAGES"; //$NON-NLS-1$
+	public static final String MethodProfilingRule_EXCLUDED_PACKAGES_DESC = "MethodProfilingRule_EXCLUDED_PACKAGES_DESC"; //$NON-NLS-1$
 	public static final String NumberOfGcThreadsRuleFactory_TEXT_INFO = "NumberOfGcThreadsRuleFactory_TEXT_INFO"; //$NON-NLS-1$
 	public static final String NumberOfGcThreadsRuleFactory_TEXT_INFO_LONG = "NumberOfGcThreadsRuleFactory_TEXT_INFO_LONG"; //$NON-NLS-1$
 	public static final String ObjectStatisticsDataProvider_AGGR_LIVE_SIZE_INCREASE = "ObjectStatisticsDataProvider_AGGR_LIVE_SIZE_INCREASE"; //$NON-NLS-1$

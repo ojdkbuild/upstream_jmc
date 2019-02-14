@@ -44,8 +44,8 @@
 		administrators to collect and analyze data from Java applications 
 		running locally or deployed in production environments.
 	</description>
-  	<url>http://jdk.java.net/jmc</url>
-  	<licenses>
+	<url>http://jdk.java.net/jmc</url>
+	<licenses>
 		<license>
 			<name>Universal Permissive License Version 1.0</name>
 			<url>http://oss.oracle.com/licenses/upl</url>
@@ -75,7 +75,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<tycho-version>1.2.0</tycho-version>
+		<tycho.version>1.2.0</tycho.version>
+		<maven.buildnumber.version>1.4</maven.buildnumber.version>
+		<maven.deploy.version>2.8.2</maven.deploy.version>
+		<maven.directory.version>0.2</maven.directory.version>
+		<maven.enforcer.version>3.0.0-M1</maven.enforcer.version>
+		<maven.resources.version>3.0.2</maven.resources.version>
+		<spotbugs.version>3.1.10</spotbugs.version>
 		<buildId>${user.name}</buildId>
 		<scmConnection>scm:hg:http://hg.openjdk.java.net/jmc/jmc</scmConnection>
 	</properties>
@@ -83,7 +89,7 @@
 		<connection>${scmConnection}</connection>
 	</scm>
 	<distributionManagement>
-			<snapshotRepository>
+		<snapshotRepository>
 			<id>jmc-publish-snapshot</id>
 			<url>${snapshot.repo}</url>
 		</snapshotRepository>
@@ -99,7 +105,7 @@
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho-version}</version>
+						<version>${tycho.version}</version>
 						<configuration>
 							<target>
 								<artifact>
@@ -120,12 +126,33 @@
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho-version}</version>
+						<version>${tycho.version}</version>
 						<configuration>
 							<target>
 								<artifact>
 									<groupId>org.openjdk.jmc</groupId>
 									<artifactId>platform-definition-oxygen</artifactId>
+									<version>7.0.0-SNAPSHOT</version>
+								</artifact>
+							</target>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>2018-09</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<target>
+								<artifact>
+									<groupId>org.openjdk.jmc</groupId>
+									<artifactId>platform-definition-2018-09</artifactId>
 									<version>7.0.0-SNAPSHOT</version>
 								</artifact>
 							</target>
@@ -140,7 +167,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.2</version>
+				<version>${maven.deploy.version}</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
@@ -148,7 +175,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
+				<version>${tycho.version}</version>
 				<configuration>
 					<environments>
 						<environment>
@@ -172,13 +199,13 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
+				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-compiler-plugin</artifactId>
-				<version>${tycho-version}</version>
+				<version>${tycho.version}</version>
 				<configuration>
 					<useProjectSettings>false</useProjectSettings>
 				</configuration>
@@ -186,7 +213,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-repository-plugin</artifactId>
-				<version>${tycho-version}</version>
+				<version>${tycho.version}</version>
 				<configuration>
 					<includeAllDependencies>true</includeAllDependencies>
 				</configuration>
@@ -194,7 +221,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-packaging-plugin</artifactId>
-				<version>${tycho-version}</version>
+				<version>${tycho.version}</version>
 				<executions>
 					<execution>
 						<id>build-qualifier</id>
@@ -205,9 +232,10 @@
 					</execution>
 				</executions>
 				<configuration>
+					<format>'v'yyyyMMdd'-'HHmm</format>
 					<archive>
 						<manifestEntries>
-							<Built-By/>
+							<Built-By />
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -215,7 +243,7 @@
 			<plugin>
 				<groupId>org.commonjava.maven.plugins</groupId>
 				<artifactId>directory-maven-plugin</artifactId>
-				<version>0.2</version>
+				<version>${maven.directory.version}</version>
 				<executions>
 					<execution>
 						<id>directories</id>
@@ -232,7 +260,7 @@
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>3.1.3</version>
+				<version>${spotbugs.version}</version>
 				<configuration>
 					<effort>Max</effort>
 					<threshold>Low</threshold>
@@ -249,7 +277,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>${maven.buildnumber.version}</version>
 				<executions>
 					<execution>
 						<phase>initialize</phase>
@@ -274,13 +302,13 @@
 							<timestampPropertyName>build.date</timestampPropertyName>
 						</configuration>
 					</execution>
-					<!-- TODO: Maybe add the create-metadata goal after we've made the switch to Mercurial  -->
+					<!-- TODO: Maybe add the create-metadata goal after we've made the switch to Mercurial -->
 				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0-M1</version>
+				<version>${maven.enforcer.version}</version>
 				<executions>
 					<execution>
 						<id>enforce-java</id>
@@ -290,10 +318,10 @@
 						<configuration>
 							<rules>
 								<requireJavaVersion>
-									<version>[1.8.0-40,9.0.0)</version>
+									<version>[1.8.0-40,)</version>
 									<message>Building JMC requires Java 8 version JDK 1.8.0_40 or later</message>
 								</requireJavaVersion>
-							</rules>		
+							</rules>
 						</configuration>
 					</execution>
 					<execution>
@@ -316,37 +344,9 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.mojo</groupId>
-										<artifactId>buildnumber-maven-plugin</artifactId>
-										<versionRange>[1.2,)</versionRange>
-										<goals>
-											<goal>create-timestamp</goal>
-											<goal>hgchangeset</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute>
-											<runOnConfiguration>true</runOnConfiguration>
-											<runOnIncremental>true</runOnIncremental>
-										</execute>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>${maven.resources.version}</version>
 					<executions>
 						<execution>
 							<id>copy-resources</id>
@@ -379,6 +379,69 @@
 										<directory>${rootDir}/license</directory>
 										<includes>
 											<include>LICENSE.txt</include>
+										</includes>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+						<execution>
+							<id>copy-resources-to-linux</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/products/org.openjdk.jmc/linux/gtk/x86_64/legal
+								</outputDirectory>
+								<resources>
+									<resource>
+										<directory>${rootDir}/license</directory>
+										<includes>
+											<include>LICENSE.txt</include>
+											<include>THIRDPARTYREADME.txt</include>
+											<include>COPYRIGHT</include>
+										</includes>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+						<execution>
+							<id>copy-resources-to-windows</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/products/org.openjdk.jmc/win32/win32/x86_64/legal
+								</outputDirectory>
+								<resources>
+									<resource>
+										<directory>${rootDir}/license</directory>
+										<includes>
+											<include>LICENSE.txt</include>
+											<include>THIRDPARTYREADME.txt</include>
+											<include>COPYRIGHT</include>
+										</includes>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+						<execution>
+							<id>copy-resources-to-mac</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/products/org.openjdk.jmc/macosx/cocoa/x86_64/legal
+								</outputDirectory>
+								<resources>
+									<resource>
+										<directory>${rootDir}/license</directory>
+										<includes>
+											<include>LICENSE.txt</include>
+											<include>THIRDPARTYREADME.txt</include>
+											<include>COPYRIGHT</include>
 										</includes>
 									</resource>
 								</resources>

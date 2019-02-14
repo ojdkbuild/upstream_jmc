@@ -33,6 +33,7 @@
 package org.openjdk.jmc.flightrecorder.rules.jdk.general;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -43,6 +44,7 @@ import java.util.concurrent.RunnableFuture;
 import org.openjdk.jmc.common.item.Aggregators;
 import org.openjdk.jmc.common.item.IItemCollection;
 import org.openjdk.jmc.common.util.IPreferenceValueProvider;
+import org.openjdk.jmc.common.util.StringToolkit;
 import org.openjdk.jmc.common.util.TypedPreference;
 import org.openjdk.jmc.flightrecorder.jdk.JdkAttributes;
 import org.openjdk.jmc.flightrecorder.jdk.JdkFilters;
@@ -72,14 +74,15 @@ public class DuplicateFlagsRule implements IRule {
 		// FIXME: Should we check if there are different jvm args in different chunks?
 		Set<String> args = jvmInfoItems.getAggregate(Aggregators.distinct(JdkAttributes.JVM_ARGUMENTS));
 		if (args != null && !args.isEmpty()) {
-
-			Set<String> dupes = JvmInternalsDataProvider.checkDuplicates(args.iterator().next());
+			
+			Collection<ArrayList<String>> dupes = JvmInternalsDataProvider.
+					checkDuplicates(args.iterator().next());
 
 			if (!dupes.isEmpty()) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("<ul>"); //$NON-NLS-1$
-				for (String dupe : dupes) {
-					sb.append("<li>" + Encode.forHtml(dupe) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+				for (ArrayList<String> dupe : dupes) {
+					sb.append("<li>" + Encode.forHtml(StringToolkit.join(dupe, ", ")) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				sb.append("</ul>"); //$NON-NLS-1$
 				String shortDescription = dupes.size() > 1
