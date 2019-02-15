@@ -3,3 +3,4 @@
 /core/tests/*/target
 /releng/platform-definitions/platform-definition-photon/platform-definition-photon.target
 /application/*/target
+/application/*/*/target
