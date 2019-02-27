@@ -278,7 +278,7 @@
 							<doCheck>false</doCheck>
 							<doUpdate>false</doUpdate>
 							<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-							<revisionOnScmFailure>7b12e0d15422</revisionOnScmFailure>
+							<revisionOnScmFailure>62c5279452a6</revisionOnScmFailure>
 						</configuration>
 					</execution>
 					<execution>
