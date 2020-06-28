@@ -109,6 +109,11 @@ public class ChartToolTipProvider implements IChartInfoVisitor {
 		bulletIndent -= 16;
 	}
 
+	@Override
+	public void hover(Object data) {
+		// Auto-generated method stub
+	}
+
 	protected String format(IDisplayable value) {
 		if (value != null) {
 			// FIXME: Add formatter that does AUTO (EXACT) or so.
@@ -131,6 +136,10 @@ public class ChartToolTipProvider implements IChartInfoVisitor {
 		}
 //		text.append("bindent='").append(bulletIndent).append("'> "); //$NON-NLS-1$ //$NON-NLS-2$
 		text.append("bindent='0'> "); //$NON-NLS-1$
+	}
+
+	protected void appendTitle(String title) {
+		text.append("<p><b>").append(title).append("</b></p>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected void appendAtIfNew(IDisplayable newAt) {
@@ -174,6 +183,9 @@ public class ChartToolTipProvider implements IChartInfoVisitor {
 	// FIXME: One idea was to let the user see the details in Properties/StackTrace views by click-selecting an event.
 	@Override
 	public void visit(ISpan span) {
+		if (span.getDescription() != null) {
+			appendTitle(span.getDescription());
+		}
 		appendAtIfNew(span.getRange());
 		appendTagLI(span.getColor());
 		// Would normally insert <span nowrap='true'> here, but since bold text is not displayed,

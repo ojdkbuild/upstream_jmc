@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--   
-   Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+   Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved.
    
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
    
@@ -34,18 +34,17 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-
  <extension
        point="org.openjdk.jmc.rjmx.actionProvider">
        <action
              factory="org.openjdk.jmc.joverflow.ui.HeapDumpAction"
-             icon="icons/joverflow_16.png"
+             icon="icons/joverflow.png"
              label="Dump Heap"
              priority="900">
        </action>
     </extension>
  <extension point="org.eclipse.ui.views">
- 	  <category name="JOverflow" id="JOverflow"></category>
+     <category name="JOverflow" id="JOverflow"/>
       <view
             allowMultiple="false"
             category="JOverflow"
@@ -62,7 +61,7 @@
             class="org.openjdk.jmc.joverflow.ui.JOverflowEditor"
             extensions="hprof"
             id="org.openjdk.jmc.joverflow.ui.JOverflowEditor"
-            icon="icons/joverflow_16.png"
+            icon="icons/joverflow.png"
             name="JOverflow Analysis" />
  </extension>
 </plugin>

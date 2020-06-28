@@ -52,10 +52,10 @@ import org.openjdk.jmc.common.unit.UnitLookup;
 import org.openjdk.jmc.common.util.IPreferenceValueProvider;
 import org.openjdk.jmc.common.util.TypedPreference;
 import org.openjdk.jmc.flightrecorder.JfrAttributes;
+import org.openjdk.jmc.flightrecorder.ext.jfx.JfxVersionUtil.JavaFxEventAvailability;
 import org.openjdk.jmc.flightrecorder.rules.IRule;
 import org.openjdk.jmc.flightrecorder.rules.Result;
 import org.openjdk.jmc.flightrecorder.rules.util.RulesToolkit;
-import org.openjdk.jmc.flightrecorder.rules.util.RulesToolkit.EventAvailability;
 
 public class JfxPulseDurationRule implements IRule {
 	private static final String RESULT_ID = "pulseDuration"; //$NON-NLS-1$
@@ -65,29 +65,33 @@ public class JfxPulseDurationRule implements IRule {
 	 * This preference is a workaround because it was deemed too time consuming to add automatic
 	 * detection.
 	 */
-	// FIXME: This should really be in Hz, but could not find it in the UnitLookup. Using count for now.
 	public static final TypedPreference<IQuantity> CONFIG_TARGET_FRAME_RATE = new TypedPreference<>(
 			"jfr.pulse.target.framerate", //$NON-NLS-1$
 			Messages.JfxPulseDurationRule_CAPTION_PREFERENCE_TARGET_FRAME_RATE,
-			Messages.JfxPulseDurationRule_DESCRIPTION_PREFERENCE_TARGET_FRAME_RATE, UnitLookup.NUMBER,
-			UnitLookup.NUMBER_UNITY.quantity(60));
+			Messages.JfxPulseDurationRule_DESCRIPTION_PREFERENCE_TARGET_FRAME_RATE, UnitLookup.FREQUENCY,
+			UnitLookup.HERTZ.quantity(60));
 
 	private static final List<TypedPreference<?>> CONFIG_ATTRIBUTES = Arrays
 			.<TypedPreference<?>> asList(CONFIG_TARGET_FRAME_RATE);
 
 	private Result getResult(IItemCollection items, IPreferenceValueProvider valueProvider) {
-		EventAvailability eventAvailability = RulesToolkit.getEventAvailability(items, JfxConstants.JFX_PULSE_ID);
-		if (eventAvailability == EventAvailability.DISABLED || eventAvailability == EventAvailability.UNKNOWN
-				|| eventAvailability == EventAvailability.NONE) {
-			return RulesToolkit.getEventAvailabilityResult(this, items, eventAvailability, JfxConstants.JFX_PULSE_ID);
+		JavaFxEventAvailability availability = JfxVersionUtil.getAvailability(items);
+		if (availability == JavaFxEventAvailability.None) {
+			// Could possibly check the JVM version for better suggestions here, but not very important
+			return RulesToolkit.getEventAvailabilityResult(this, items,
+					RulesToolkit.getEventAvailability(items, JfxConstants.TYPE_ID_PULSE_PHASE_12),
+					JfxConstants.TYPE_ID_PULSE_PHASE_12);
 		}
+
 		IQuantity targetFramerate = valueProvider.getPreferenceValue(CONFIG_TARGET_FRAME_RATE);
 		ITypedQuantity<LinearUnit> targetPhaseTime = UnitLookup.MILLISECOND
 				.quantity(1000.0 / targetFramerate.longValue());
 		IItemFilter longDurationFilter = ItemFilters.more(JfrAttributes.DURATION, targetPhaseTime);
-		IItemFilter longPhasesFilter = ItemFilters.and(longDurationFilter, ItemFilters.type(JfxConstants.JFX_PULSE_ID));
+		IItemFilter longPhasesFilter = ItemFilters.and(longDurationFilter,
+				ItemFilters.type(JfxVersionUtil.getPulseTypeId(availability)));
 		IQuantity longPhases = items.getAggregate(Aggregators.count(longPhasesFilter));
-		IQuantity allPhases = items.getAggregate(Aggregators.count(ItemFilters.type(JfxConstants.JFX_PULSE_ID)));
+		IQuantity allPhases = items
+				.getAggregate(Aggregators.count(ItemFilters.type(JfxVersionUtil.getPulseTypeId(availability))));
 		if (longPhases != null && longPhases.doubleValue() > 0) {
 			double ratioOfLongPhases = longPhases.ratioTo(allPhases);
 			double mappedScore = RulesToolkit.mapExp100(ratioOfLongPhases, 0.05, 0.5);
@@ -96,7 +100,8 @@ public class JfxPulseDurationRule implements IRule {
 					MessageFormat.format(Messages.JfxPulseDurationRule_WARNING,
 							UnitLookup.PERCENT_UNITY.quantity(ratioOfLongPhases).displayUsing(IDisplayable.AUTO),
 							targetPhaseTime.displayUsing(IDisplayable.AUTO)),
-					MessageFormat.format(Messages.JfxPulseDurationRule_WARNING_LONG, targetFramerate));
+					MessageFormat.format(Messages.JfxPulseDurationRule_WARNING_LONG, 
+							targetFramerate.displayUsing(IDisplayable.AUTO)));
 		}
 		return new Result(this, 0, Messages.JfxPulseDurationRule_OK);
 	}

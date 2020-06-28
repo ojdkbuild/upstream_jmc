@@ -184,7 +184,8 @@ Prerequisites for building Mission Control:
 First get third party dependencies into a local p2 repo and make it available on localhost:
 
 ```bash
-cd missioncontrolfolder/releng/third-party
+cd missioncontrolfolder [where you just cloned the sources]
+cd releng/third-party
 mvn p2:site
 mvn jetty:run
 ```
@@ -232,15 +233,6 @@ mvn verify
 
 To run the UI tests:
 
-> Currently, in order to run UI tests you need to supply the Jemmy UI testing libraries yourself. These can be built from source available at the mercurial repository at http://hg.openjdk.java.net/code-tools/jemmy/v3/.
-
->1. Create a directory on your local drive where you wish to build the Jemmy libraries.
->2. In a terminal, when in the newly created directory, issue `hg clone http://hg.openjdk.java.net/code-tools/jemmy/v3/`. If you don't have a Mercurial client you can download the code from http://hg.openjdk.java.net/code-tools/jemmy/v3/archive/tip.zip (or .gz or .bz2).
->3. Build Jemmy by issuing `mvn clean package`. Adding `-DskipTests` makes sure that UI tests that might fail won't stop the packaging.
->4. Copy the resulting jar files from core/JemmyCore/target, core/JemmyAWTInput/target, core/JemmyBrowser/target and SWT/JemmySWT/target to \[jmc_repo_dir\]/application/uitests/org.openjdk.jmc.test.jemmy/lib/ (create the lib directory first if it does not exist).
-
->(As soon as Jemmy is published on Maven Central, this manual build step will be removed.)
-
 ```bash
 mvn verify -P uitests
 ```
@@ -275,25 +267,36 @@ The above will not run StacktraceModelTest, as that is also matched by "test.exc
 
 Note that if UI-tests are supposed to be part of the filtered run the "uitests" profile needs to be specified as well. Otherwise the UI won't start up and so the tests fail.
 
+
+## Building using docker and docker-compose
+
+```
+docker-compose -f docker/docker-compose.yml run jmc
+```
+
+Once build has finished the results will be in the `target` directory
+
 ## Running the Locally Built JMC
-The built JMC will end up in the `target` folder in the root. To run it, go to `target/products/org.openjdk.jmc/<platform>` to find the launcher. Don't forget to override the vm flag with the JVM you wish to use for running JMC.
+The built JMC will end up in the `target` folder in the root. The launcher is located in `target/products/org.openjdk.jmc/<platform>`. By default whichever JRE is on the path 
+will be used. Remember to set it to a JDK (rather than a JRE) if you want the launched mission control to automatically discover locally running JVMs. To override which JVM 
+to use when launching, add -vm and the path to a directory where a JDK java launcher is located, for example -vm $JAVA_HOME/bin.
 
 Here is an example for Mac OS X:
 
 ```bash
-target/products/org.openjdk.jmc/macosx/cocoa/x86_64/JDK\ Mission\ Control.app/Contents/MacOS/jmc -vm $JAVA_HOME/bin
+target/products/org.openjdk.jmc/macosx/cocoa/x86_64/JDK\ Mission\ Control.app/Contents/MacOS/jmc
 ```
 
 Here is an example for Linux:
 
 ```bash
-target/products/org.openjdk.jmc/linux/gtk/x86_64/jmc -vm $JAVA_HOME/bin
+target/products/org.openjdk.jmc/linux/gtk/x86_64/jmc
 ```
 
 And here is an example for Windows x64:
 
 ```bash
-target\products\org.openjdk.jmc\win32\win32\x86_64\jmc.exe -vm %JAVA_HOME%\bin
+target\products\org.openjdk.jmc\win32\win32\x86_64\jmc.exe
 ```
 
 ## Using the Built JMC Update Site in Eclipse
@@ -314,7 +317,7 @@ application/org.openjdk.jmc.updatesite.ide/target/
 To install it into Eclipe, simply open Eclipse and select Help | Install New Software... In the dialog, click Add... and then click the Archive... button. Select the built update site, e.g. 
 
 ```bash
-application/org.openjdk.jmc.updatesite.ide/target/org.openjdk.jmc.updatesite.ide-7.0.0-SNAPSHOT.zip
+application/org.openjdk.jmc.updatesite.ide/target/org.openjdk.jmc.updatesite.ide-7.1.1-SNAPSHOT.zip
 ```
 
 ## Setting Up for Development and Launching in Eclipse

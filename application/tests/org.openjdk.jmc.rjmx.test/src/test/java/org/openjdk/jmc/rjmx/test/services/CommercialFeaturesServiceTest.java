@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -36,7 +36,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 import org.openjdk.jmc.rjmx.ConnectionException;
 import org.openjdk.jmc.rjmx.IConnectionHandle;
 import org.openjdk.jmc.rjmx.services.ICommercialFeaturesService;
@@ -63,22 +62,21 @@ public class CommercialFeaturesServiceTest extends ServerHandleTestCase {
 	public void testSetCommercialFeaturesState() throws Exception {
 		ICommercialFeaturesService service = getCommercialFeaturesService();
 		// Check state. Any state is okay, but we want to catch exceptions.
-		if (!service.isCommercialFeaturesEnabled()) {
+		if (service.hasCommercialFeatures() && !service.isCommercialFeaturesEnabled()) {
 			service.enableCommercialFeatures();
 		}
-		assertTrue("Commercial features should now be enabled!", service.isCommercialFeaturesEnabled()); //$NON-NLS-1$
+		if (service.hasCommercialFeatures()) {
+			assertTrue("Commercial features should now be enabled!", service.isCommercialFeaturesEnabled());
+		}
 	}
 
 	private ICommercialFeaturesService getCommercialFeaturesService() throws ConnectionException {
-		IConnectionHandle handle = getConnectionHandle();
-
-		// LocalRJMXTestToolkit.createDefaultConnectionHandle(getConnectionManager());
+		IConnectionHandle handle = getDefaultServer().connect("Connection handle for test");
 		assumeHotSpot7u4OrLater(handle);
-
 		ICommercialFeaturesService service = handle.getServiceOrNull(ICommercialFeaturesService.class);
 
 		assertNotNull(
-				"Could not retrieve the commercial features service. Please make sure that you are connecting to a Java 7u4 or later JVM.", //$NON-NLS-1$
+				"Could not retrieve the commercial features service. Please make sure that you are connecting to a Java 7u4 or later JVM.",
 				service);
 		return service;
 	}

@@ -34,10 +34,10 @@
 <feature
       id="org.openjdk.jmc.feature.rcp"
       label="%name"
-      version="7.0.0.qualifier"
+      version="7.1.1.qualifier"
       provider-name="%provider"
       license-feature="org.openjdk.jmc.feature.license"
-      license-feature-version="7.0.0.qualifier">
+      license-feature-version="7.1.1.qualifier">
 
    <description url="%descriptionUrl">
       %description
@@ -65,6 +65,10 @@
 
    <includes
          id="org.openjdk.jmc.feature.flightrecorder"
+         version="0.0.0"/>
+
+   <includes
+         id="org.openjdk.jmc.feature.joverflow"
          version="0.0.0"/>
 
    <requires>
@@ -171,7 +175,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.equinox.ds"
+         id="org.apache.felix.scr"
          download-size="0"
          install-size="0"
          version="0.0.0"

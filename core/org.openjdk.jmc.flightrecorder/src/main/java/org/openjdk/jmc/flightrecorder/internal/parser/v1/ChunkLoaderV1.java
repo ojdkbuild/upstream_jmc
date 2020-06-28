@@ -84,6 +84,9 @@ public class ChunkLoaderV1 implements IChunkLoader {
 			input.seek(index);
 			int size = input.readInt();
 			long type = input.readLong();
+			if (size == 0) {
+				throw new CouldNotLoadRecordingException("Found event with invalid size (0)"); //$NON-NLS-1$
+			}
 			if (type != CONSTANT_POOL_EVENT_TYPE && type != ChunkMetadata.METADATA_EVENT_TYPE) {
 				manager.readEvent(type, input);
 			}

@@ -116,7 +116,7 @@ class TypeManager {
 	}
 
 	// NOTE: Using constant pool id as identifier.
-	private static final Map<Long, StructContentType<Object[]>> STRUCT_TYPES = new HashMap<>();
+	private final Map<Long, StructContentType<Object[]>> STRUCT_TYPES = new HashMap<>();
 
 	private class TypeEntry {
 		private static final String STRUCT_TYPE_CLASS = "java.lang.Class"; //$NON-NLS-1$
@@ -466,7 +466,7 @@ class TypeManager {
 			}
 			reader = new PoolReader(fieldType.constants, reader.getContentType());
 		}
-		return f.isArray() ? new ArrayReader(reader) : reader;
+		return f.isArray() ? new ArrayReader(reader, header) : reader;
 	}
 
 	private static String buildLabel(String id, AnnotatedElement element) {

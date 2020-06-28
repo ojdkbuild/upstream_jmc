@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -67,12 +67,12 @@ public final class JVMSupportToolkit {
 			title = Messages.JVMSupport_TITLE_JROCKIT_NOT_SUPPORTED;
 			message = Messages.JVMSupport_MESSAGE_JROCKIT_NOT_SUPPORTED;
 		} else if (!ConnectionToolkit.isHotSpot(connection)) {
-			title = Messages.JVMSupport_TITLE_NOT_A_KNOWN_JVM;
-			message = Messages.JVMSupport_MESSAGE_NOT_A_KNOWN_JVM;
+			title = Messages.JVMSupport_TITLE_UNKNOWN_JVM;
+			message = Messages.JVMSupport_MESSAGE_UNKNOWN_JVM;
 		} else if (!ConnectionToolkit.isJavaVersionAboveOrEqual(connection,
 				JavaVersionSupport.DIAGNOSTIC_COMMANDS_SUPPORTED)) {
-			title = Messages.JVMSupport_TITLE_TOO_OLD_JVM_CONSOLE;
-			message = Messages.JVMSupport_MESSAGE_TOO_OLD_JVM_CONSOLE;
+			title = Messages.JVMSupport_TITLE_LEGACY_JVM_CONSOLE;
+			message = Messages.JVMSupport_MESSAGE_LEGACY_JVM_CONSOLE;
 		}
 
 		if (title != null) {
@@ -82,6 +82,27 @@ public final class JVMSupportToolkit {
 			return returnInfo;
 		}
 		return new String[0];
+	}
+
+	/**
+	 * Checks if Flight Recorder is available for use
+	 * 
+	 * @param connection
+	 * @return If it is an Oracle JVM or there is a FlightRecorder VM option, then return true.
+	 *         Otherwise, return false. This is used for verifying JDK 8 JVMs that are not built
+	 *         with JFR enabled, e.g., OpenJDK 8
+	 */
+	public static boolean hasFlightRecorder(IConnectionHandle connection) {
+		if (ConnectionToolkit.isOracle(connection)) {
+			return true;
+		}
+		MBeanServerConnection server = connection.getServiceOrNull(MBeanServerConnection.class);
+		try {
+			HotspotManagementToolkit.getVMOption(server, "FlightRecorder");
+			return true;
+		} catch (Exception e) { // RuntimeMBeanException thrown if FlightRecorder is not present
+			return false;
+		}
 	}
 
 	/**
@@ -137,7 +158,7 @@ public final class JVMSupportToolkit {
 	}
 
 	/**
-	 * Returns information about whether to server denoted by the handle supports Flight Recorder
+	 * Returns information about whether the server supports Flight Recorder.
 	 *
 	 * @param handle
 	 *            the server to check
@@ -202,7 +223,7 @@ public final class JVMSupportToolkit {
 	}
 
 	private static String getJfrJRockitNotSupported(boolean shortMessage) {
-		return shortMessage ? Messages.JVMSupport_JROCKIT_NOT_LONGER_SUPPORTED_SHORT
-				: Messages.JVMSupport_JROCKIT_NOT_LONGER_SUPPORTED;
+		return shortMessage ? Messages.JVMSupport_JROCKIT_NO_LONGER_SUPPORTED_SHORT
+				: Messages.JVMSupport_JROCKIT_NO_LONGER_SUPPORTED;
 	}
 }

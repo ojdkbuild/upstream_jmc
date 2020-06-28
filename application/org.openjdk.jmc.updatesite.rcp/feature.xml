@@ -34,7 +34,7 @@
 <feature
       id="org.openjdk.jmc.updatesite.rcp"
       label="JDK Mission Control Supported RCP Site"
-      version="7.0.0.qualifier">
+      version="7.1.1.qualifier">
 
    <description>
       This is a release engineering internal &quot;feature&quot;. It just happen
@@ -68,10 +68,6 @@ copyright or other irrelevant stuff in here.
 
    <includes
          id="org.openjdk.jmc.feature.twitter"
-         version="0.0.0"/>
-
-   <includes
-         id="org.openjdk.jmc.feature.joverflow"
          version="0.0.0"/>
 
 </feature>

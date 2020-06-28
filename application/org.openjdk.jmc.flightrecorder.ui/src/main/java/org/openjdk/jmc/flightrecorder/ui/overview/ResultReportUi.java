@@ -87,8 +87,8 @@ public class ResultReportUi {
 
 	private static final String OVERVIEW_MAKE_SCALABLE = "overview.makeScalable();"; //$NON-NLS-1$
 	private static final String OVERVIEW_UPDATE_PAGE_HEADERS_VISIBILITY = "overview.updatePageHeadersVisibility();"; //$NON-NLS-1$
-	private static final Pattern HTML_ANCHOR_PATTERN = Pattern.compile("<a href=\"(.*?)\">(.*?)</a>");
-	private static final String OPEN_BROWSER_WINDOW = "openWindowByUrl";
+	private static final Pattern HTML_ANCHOR_PATTERN = Pattern.compile("<a href=\"(.*?)\">(.*?)</a>"); //$NON-NLS-1$
+	private static final String OPEN_BROWSER_WINDOW = "openWindowByUrl"; //$NON-NLS-1$
 
 	private static class Linker extends BrowserFunction {
 
@@ -291,9 +291,9 @@ public class ResultReportUi {
 	}
 
 	private static String openWindowMethod(String url, String name){
-        return new StringBuilder().append("#\" onclick=\"").append(OPEN_BROWSER_WINDOW).append("(").append("\u0027")
-                .append(url).append("\u0027").append(',').append("\u0027")
-                .append(name).append("\u0027").append(");return false;").toString();
+        return new StringBuilder().append("#\" onclick=\"").append(OPEN_BROWSER_WINDOW).append("(").append("\u0027") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                .append(url).append("\u0027").append(',').append("\u0027") //$NON-NLS-1$ //$NON-NLS-2$
+                .append(name).append("\u0027").append(");return false;").toString();  //$NON-NLS-1$//$NON-NLS-2$
     }
 
 	public ResultReportUi(boolean isSinglePage) {
@@ -330,76 +330,74 @@ public class ResultReportUi {
 		return showOk;
 	}
 
-	private ConcurrentLinkedQueue<IRule> resultEventQueue = new ConcurrentLinkedQueue<>();
+	private ConcurrentLinkedQueue<String> commandQueue = new ConcurrentLinkedQueue<>();
 	private Collection<String> topics = RulesToolkit.getAllTopics();
 	private Collection<Result> results;
 
-	public void updateRule(IRule rule) {
-		// FIXME: Possible race condition where elements may be added to the queue without being consumed
-		if (resultEventQueue.isEmpty()) {
-			resultEventQueue.add(rule);
-			DisplayToolkit.safeAsyncExec(() -> {
-				if (browser.isDisposed()) {
-					return;
-				}
-				// FIXME: Avoid implicit dependency on HTML/javascript template. Generate script in RulesHtmlToolkit instead
-				StringBuilder script = new StringBuilder();
-				while (!resultEventQueue.isEmpty()) {
-					IRule next = resultEventQueue.poll();
-					Result result = editor.getRuleManager().getResult(next);
-					if (result == null) {
-						continue;
-					}
-					long score = Math.round(result.getScore());
-					String adjustedHtml = adjustAnchorFollowAction(RulesHtmlToolkit.getDescription(result));//$NON-NLS-1$ //$NON-NLS-2$
-					String quoteEscape = adjustedHtml.replaceAll("\\\"", "\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
-					String description = quoteEscape.replaceAll("\n", "</br>"); //$NON-NLS-1$ //$NON-NLS-2$
-					script.append(String.format("overview.updateResult(\"%s\", %d, \"%s\");", //$NON-NLS-1$
-							result.getRule().getId(), score, description));
-				}
-				String[] topicsArray = topics.toArray(new String[topics.size()]);
-				if (!isSinglePage) {
-					boolean allOk = editor.getRuleManager().getScoreStream(topicsArray)
-							.allMatch(d -> d > RulesHtmlToolkit.IN_PROGRESS && d < Severity.INFO.getLimit()) && !showOk;
-					script.append(String.format("overview.allOk(%b);", allOk)); //$NON-NLS-1$
-				}
-				boolean allIgnored = editor.getRuleManager().getScoreStream(topicsArray)
-						.allMatch(d -> d == Result.IGNORE);
-				script.append(String.format("overview.allIgnored(%b);", allIgnored)); //$NON-NLS-1$
-				try {
-					if (isLoaded) {
-						browser.evaluate(script.toString());
-						browser.evaluate(OVERVIEW_UPDATE_PAGE_HEADERS_VISIBILITY);
-					} else {
-						final String finalScript = script.toString();
-						browser.addProgressListener(new ProgressAdapter() {
-							@Override
-							public void completed(ProgressEvent event) {
-								browser.evaluate(finalScript);
-								isLoaded = true;
-								browser.evaluate(OVERVIEW_UPDATE_PAGE_HEADERS_VISIBILITY);
-								browser.removeProgressListener(this);
-							}
-						});
-					}
-				} catch (IllegalArgumentException | SWTException e) {
-					try {
-						FlightRecorderUI.getDefault().getLogger().log(Level.INFO,
-								"Could not update single result, redrawing html view. " + e.getMessage()); //$NON-NLS-1$
-						String html = isSinglePage ? RulesHtmlToolkit.generateSinglePageHtml(results)
-								: RulesHtmlToolkit.generateStructuredHtml(new PageContainerResultProvider(editor),
-										descriptors, resultExpandedStates, false);
-						String adjustedHtml = adjustAnchorFollowAction(html);
-						browser.setText(adjustedHtml);
-					} catch (Exception e1) {
-						FlightRecorderUI.getDefault().getLogger().log(Level.WARNING, "Could not update Result Overview", //$NON-NLS-1$
-								e1);
-					}
-				}
-			});
-		} else {
-			resultEventQueue.add(rule);
+	private Runnable cmdExecRunnable = () -> {
+		if (browser.isDisposed()) {
+			return;
 		}
+
+		if (!isLoaded) {
+			// This shouldn't happen anyway. Just make sure we know if something goes wrong.
+			throw new RuntimeException("Document not yet ready"); //$NON-NLS-1$
+		}
+
+		try {
+			for (String cmd = commandQueue.poll(); cmd != null; cmd = commandQueue.poll()) {
+				browser.evaluate(cmd);
+			}
+			browser.evaluate(OVERVIEW_UPDATE_PAGE_HEADERS_VISIBILITY);
+		} catch (IllegalArgumentException | SWTException e) {
+			try {
+				FlightRecorderUI.getDefault().getLogger().log(Level.INFO,
+						"Could not update single result, redrawing html view. " + e.getMessage()); //$NON-NLS-1$
+				String html = isSinglePage ? RulesHtmlToolkit.generateSinglePageHtml(results)
+						: RulesHtmlToolkit.generateStructuredHtml(new PageContainerResultProvider(editor), descriptors,
+								resultExpandedStates, false);
+				String adjustedHtml = adjustAnchorFollowAction(html);
+				browser.setText(adjustedHtml);
+			} catch (IOException e1) {
+				FlightRecorderUI.getDefault().getLogger().log(Level.WARNING, "Could not update Result Overview", //$NON-NLS-1$
+						e1);
+			}
+		}
+	};
+
+	public void updateRule(IRule rule) {
+		// FIXME: Avoid implicit dependency on HTML/javascript template. Generate script in RulesHtmlToolkit instead
+		StringBuilder script = new StringBuilder();
+
+		Result result = editor.getRuleManager().getResult(rule);
+		if (result == null) {
+			return;
+		}
+
+		long score = Math.round(result.getScore());
+		String adjustedHtml = adjustAnchorFollowAction(RulesHtmlToolkit.getDescription(result));
+		String quoteEscape = adjustedHtml.replaceAll("\\\"", "\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
+		String description = quoteEscape.replaceAll("\n", "</br>"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.append(String.format("overview.updateResult(\"%s\", %d, \"%s\");", //$NON-NLS-1$
+				result.getRule().getId(), score, description));
+
+		String[] topicsArray = topics.toArray(new String[topics.size()]);
+		if (!isSinglePage) {
+			boolean allOk = editor.getRuleManager().getScoreStream(topicsArray)
+					.allMatch(d -> d > RulesHtmlToolkit.IN_PROGRESS && d < Severity.INFO.getLimit()) && !showOk;
+			script.append(String.format("overview.allOk(%b);", allOk)); //$NON-NLS-1$
+		}
+		boolean allIgnored = editor.getRuleManager().getScoreStream(topicsArray).allMatch(d -> d == Result.IGNORE);
+		script.append(String.format("overview.allIgnored(%b);", allIgnored)); //$NON-NLS-1$
+
+		commandQueue.add(script.toString());
+
+		if (!isLoaded) {
+			// wait for ProgressListener callback to execute commands after document loaded
+			return;
+		}
+
+		DisplayToolkit.safeAsyncExec(cmdExecRunnable);
 	}
 
 	public void setResults(Collection<Result> results) {
@@ -430,7 +428,7 @@ public class ResultReportUi {
 			browser.addProgressListener(new ProgressAdapter() {
 				@Override
 				public void completed(ProgressEvent event) {
-					new OpenWindowFunction(browser, OPEN_BROWSER_WINDOW); //$NON-NLS-1$
+					new OpenWindowFunction(browser, OPEN_BROWSER_WINDOW);
 					new Linker(browser, "linker", descriptors, editor); //$NON-NLS-1$
 					new Expander(browser, "expander"); //$NON-NLS-1$
 					browser.execute(String.format("overview.showOk(%b);", showOk)); //$NON-NLS-1$
@@ -439,6 +437,8 @@ public class ResultReportUi {
 					}
 					browser.evaluate(OVERVIEW_UPDATE_PAGE_HEADERS_VISIBILITY);
 					isLoaded = true;
+
+					DisplayToolkit.safeAsyncExec(cmdExecRunnable);
 				}
 			});
 		} catch (IOException | IllegalArgumentException e) {

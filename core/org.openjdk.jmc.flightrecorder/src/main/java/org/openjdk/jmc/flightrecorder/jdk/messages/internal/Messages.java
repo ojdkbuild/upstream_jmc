@@ -156,9 +156,12 @@ public class Messages {
 	public static final String ATTR_ALLOCATION_CLASS = "ATTR_ALLOCATION_CLASS"; //$NON-NLS-1$
 	public static final String ATTR_ALLOCATION_CLASS_DESC = "ATTR_ALLOCATION_CLASS_DESC"; //$NON-NLS-1$
 	public static final String ATTR_ALLOCATION_SIZE = "ATTR_ALLOCATION_SIZE"; //$NON-NLS-1$
+	public static final String ATTR_ALLOCATION_TOTAL_SIZE = "ATTR_ALLOCATION_TOTAL_SIZE"; //$NON-NLS-1$
+	public static final String ATTR_ALLOCATION_TOTAL_SIZE_DESC = "ATTR_ALLOCATION_TOTAL_SIZE_DESC"; //$NON-NLS-1$
 	public static final String ATTR_ANONYMOUS_BLOCK_SIZE = "ATTR_ANONYMOUS_BLOCK_SIZE"; //$NON-NLS-1$
 	public static final String ATTR_ANONYMOUS_CHUNK_SIZE = "ATTR_ANONYMOUS_CHUNK_SIZE"; //$NON-NLS-1$
 	public static final String ATTR_ANONYMOUS_CLASS_COUNT = "ATTR_ANONYMOUS_CLASS_COUNT"; //$NON-NLS-1$
+	public static final String ATTR_BASE_ADDRESS = "ATTR_BASE_ADDRESS"; //$NON-NLS-1$
 	public static final String ATTR_BLOCK_SIZE = "ATTR_BLOCK_SIZE"; //$NON-NLS-1$
 	public static final String ATTR_BLOCKING = "ATTR_BLOCKING"; //$NON-NLS-1$
 	public static final String ATTR_BLOCKING_DESC = "ATTR_BLOCKING_DESC"; //$NON-NLS-1$
@@ -226,6 +229,12 @@ public class Messages {
 	public static final String ATTR_EXPORTED_PACKAGE = "ATTR_EXPORTED_PACKAGE"; //$NON-NLS-1$
 	public static final String ATTR_EXPORTING_MODULE = "ATTR_EXPORTING_MODULE"; //$NON-NLS-1$
 	public static final String ATTR_FLAG_NAME = "ATTR_FLAG_NAME"; //$NON-NLS-1$
+	public static final String ATTR_FLAG_NEW_VALUE_BOOLEAN = "ATTR_FLAG_NEW_VALUE BOOLEAN"; //$NON-NLS-1$
+	public static final String ATTR_FLAG_NEW_VALUE_NUMBER = "ATTR_FLAG_NEW_VALUE_NUMBER"; //$NON-NLS-1$
+	public static final String ATTR_FLAG_NEW_VALUE_TEXT = "ATTR_FLAG_NEW_VALUE_TEXT"; //$NON-NLS-1$
+	public static final String ATTR_FLAG_OLD_VALUE_BOOLEAN = "ATTR_FLAG_OLD_VALUE_BOOLEAN"; //$NON-NLS-1$
+	public static final String ATTR_FLAG_OLD_VALUE_NUMBER= "ATTR_FLAG_OLD_VALUE_NUMBER"; //$NON-NLS-1$
+	public static final String ATTR_FLAG_OLD_VALUE_TEXT = "ATTR_FLAG_OLD_VALUE_TEXT"; //$NON-NLS-1$
 	public static final String ATTR_FLAG_ORIGIN = "ATTR_FLAG_ORIGIN"; //$NON-NLS-1$
 	public static final String ATTR_FLAG_VALUE_BOOLEAN = "ATTR_FLAG_VALUE_BOOLEAN"; //$NON-NLS-1$
 	public static final String ATTR_FLAG_VALUE_NUMBER = "ATTR_FLAG_VALUE_NUMBER"; //$NON-NLS-1$
@@ -314,6 +323,7 @@ public class Messages {
 	public static final String ATTR_JAVA_ARGUMENTS = "ATTR_JAVA_ARGUMENTS"; //$NON-NLS-1$
 	public static final String ATTR_JVM_ARGUMENTS = "ATTR_JVM_ARGUMENTS"; //$NON-NLS-1$
 	public static final String ATTR_JVM_NAME = "ATTR_JVM_NAME"; //$NON-NLS-1$
+	public static final String ATTR_JVM_PID = "ATTR_JVM_PID"; //$NON-NLS-1$
 	public static final String ATTR_JVM_START_TIME = "ATTR_JVM_START_TIME"; //$NON-NLS-1$
 	public static final String ATTR_JVM_SYSTEM = "ATTR_JVM_SYSTEM"; //$NON-NLS-1$
 	public static final String ATTR_JVM_SYSTEM_DESC = "ATTR_JVM_SYSTEM_DESC"; //$NON-NLS-1$
@@ -328,6 +338,7 @@ public class Messages {
 	public static final String ATTR_MONITOR_ADDRESS = "ATTR_MONITOR_ADDRESS"; //$NON-NLS-1$
 	public static final String ATTR_MONITOR_CLASS = "ATTR_MONITOR_CLASS"; //$NON-NLS-1$
 	public static final String ATTR_MONITOR_PREVIOUS_OWNER = "ATTR_MONITOR_PREVIOUS_OWNER"; //$NON-NLS-1$
+	public static final String ATTR_NATIVE_LIBRARY_NAME = "ATTR_NATIVE_LIBRARY_NAME"; //$NON-NLS-1$;
 	public static final String ATTR_NEW_RATIO = "ATTR_NEW_RATIO"; //$NON-NLS-1$
 	public static final String ATTR_NEW_RATIO_DESC = "ATTR_NEW_RATIO_DESC"; //$NON-NLS-1$
 	public static final String ATTR_NON_NMETHODS_ADAPTORS = "ATTR_NON_NMETHODS_ADAPTORS"; //$NON-NLS-1$
@@ -369,6 +380,8 @@ public class Messages {
 	public static final String ATTR_OS_VERSION = "ATTR_OS_VERSION"; //$NON-NLS-1$
 	public static final String ATTR_OTHER_CPU = "ATTR_OTHER_CPU"; //$NON-NLS-1$
 	public static final String ATTR_OTHER_CPU_DESC = "ATTR_OTHER_CPU_DESC"; //$NON-NLS-1$
+	public static final String ATTR_OTHER_CPU_RATIO = "ATTR_OTHER_CPU_RATIO"; //$NON-NLS-1$
+	public static final String ATTR_OTHER_CPU_RATIO_DESC = "ATTR_OTHER_CPU_RATIO_DESC"; //$NON-NLS-1$
 	public static final String ATTR_PARALLEL_GC_THREADS = "ATTR_PARALLEL_GC_THREADS"; //$NON-NLS-1$
 	public static final String ATTR_PARALLEL_GC_THREADS_DESC = "ATTR_PARALLEL_GC_THREADS_DESC"; //$NON-NLS-1$
 	public static final String ATTR_PARENT_CLASSLOADER = "ATTR_PARENT_CLASSLOADER"; //$NON-NLS-1$
@@ -434,6 +447,7 @@ public class Messages {
 	public static final String ATTR_TLAB_MIN_SIZE = "ATTR_TLAB_MIN_SIZE"; //$NON-NLS-1$
 	public static final String ATTR_TLAB_REFILL_WASTE_LIMIT = "ATTR_TLAB_REFILL_WASTE_LIMIT"; //$NON-NLS-1$
 	public static final String ATTR_TLAB_SIZE = "ATTR_TLAB_SIZE"; //$NON-NLS-1$
+	public static final String ATTR_TOP_ADDRESS = "ATTR_TOP_ADDRESS"; //$NON-NLS-1$
 	public static final String ATTR_UNALLOCATED = "ATTR_UNALLOCATED"; //$NON-NLS-1$
 	public static final String ATTR_USES_TLABS = "ATTR_USES_TLABS"; //$NON-NLS-1$
 	public static final String ATTR_USES_TLABS_DESC = "ATTR_USES_TLABS_DESC"; //$NON-NLS-1$
@@ -443,9 +457,9 @@ public class Messages {
 	public static final String ATTR_YOUNG_COLLECTOR_DESC = "ATTR_YOUNG_COLLECTOR_DESC"; //$NON-NLS-1$
 	public static final String ATTR_YOUNG_GENERATION_MAX_SIZE = "ATTR_YOUNG_GENERATION_MAX_SIZE"; //$NON-NLS-1$
 	public static final String ATTR_YOUNG_GENERATION_MIN_SIZE = "ATTR_YOUNG_GENERATION_MIN_SIZE"; //$NON-NLS-1$
-	public static final String ATTR_SHUTDOWN_REASON = "ATTR_SHUTDOWN_REASON"; // $NON-NLS-1$
-	public static final String ATTR_SHUTDOWN_REASON_DESC = "ATTR_SHUTDOWN_REASON_DESC"; // $NON-NLS-1$
-	public static final String ATTR_SHUTDOWN_TIME = "ATTR_SHUTDOWN_TIME"; // $NON-NLS-1$
+	public static final String ATTR_SHUTDOWN_REASON = "ATTR_SHUTDOWN_REASON"; //$NON-NLS-1$
+	public static final String ATTR_SHUTDOWN_REASON_DESC = "ATTR_SHUTDOWN_REASON_DESC"; //$NON-NLS-1$
+	public static final String ATTR_SHUTDOWN_TIME = "ATTR_SHUTDOWN_TIME"; //$NON-NLS-1$	
 
 	private Messages() {
 	}

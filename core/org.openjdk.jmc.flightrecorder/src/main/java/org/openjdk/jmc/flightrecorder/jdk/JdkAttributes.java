@@ -49,6 +49,7 @@ import static org.openjdk.jmc.common.unit.UnitLookup.TIMESPAN;
 import static org.openjdk.jmc.common.unit.UnitLookup.TIMESTAMP;
 import static org.openjdk.jmc.common.unit.UnitLookup.UNKNOWN;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openjdk.jmc.common.IDisplayable;
@@ -73,6 +74,7 @@ import org.openjdk.jmc.common.unit.UnitLookup;
 import org.openjdk.jmc.common.util.FormatToolkit;
 import org.openjdk.jmc.common.util.LabeledIdentifier;
 import org.openjdk.jmc.common.util.MCClassLoader;
+import org.openjdk.jmc.common.util.MemberAccessorToolkit;
 import org.openjdk.jmc.flightrecorder.JfrAttributes;
 import org.openjdk.jmc.flightrecorder.jdk.messages.internal.Messages;
 
@@ -368,6 +370,26 @@ public final class JdkAttributes {
 			};
 		}
 	});
+	public static final IAttribute<IQuantity> OTHER_CPU_RATIO = Attribute.canonicalize(new Attribute<IQuantity>("otherCpuRatio", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_OTHER_CPU_RATIO), Messages.getString(Messages.ATTR_OTHER_CPU_RATIO_DESC), PERCENTAGE) {
+		@Override
+		public <U> IMemberAccessor<IQuantity, U> customAccessor(IType<U> type) {
+			final IMemberAccessor<IQuantity, U> otherCpuAccessor = OTHER_CPU.getAccessor(type);
+			// Avoid possible future circularity by asking the type directly.
+			final IMemberAccessor<IQuantity, U> machineTotalAccessor = type.getAccessor(MACHINE_TOTAL.getKey());
+			if ((otherCpuAccessor == null) || (machineTotalAccessor == null)) {
+				return null;
+			}
+			return new IMemberAccessor<IQuantity, U>() {
+				@Override
+				public IQuantity getMember(U i) {
+					IQuantity machineTotal = machineTotalAccessor.getMember(i);
+					IQuantity otherCpu = otherCpuAccessor.getMember(i);
+					return otherCpu != null && machineTotal != null ? otherCpu.multiply(machineTotal.doubleValue()) : null;
+				}
+			};
+		}
+	});
 
 	public static final IAttribute<IQuantity> RECORDING_ID = attr("id", Messages.getString(Messages.ATTR_RECORDING_ID), //$NON-NLS-1$
 			NUMBER);
@@ -441,6 +463,8 @@ public final class JdkAttributes {
 			Messages.getString(Messages.ATTR_JVM_START_TIME), TIMESTAMP);
 	public static final IAttribute<String> JVM_NAME = attr("jvmName", Messages.getString(Messages.ATTR_JVM_NAME), //$NON-NLS-1$
 			PLAIN_TEXT);
+	public static final IAttribute<IQuantity> JVM_PID = attr("pid", Messages.getString(Messages.ATTR_JVM_PID), //$NON-NLS-1$
+			NUMBER);
 	public static final IAttribute<String> JVM_VERSION = attr("jvmVersion", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_JVM_VERSION), PLAIN_TEXT);
 	public static final IAttribute<String> JVM_ARGUMENTS = attr("jvmArguments", //$NON-NLS-1$
@@ -468,6 +492,23 @@ public final class JdkAttributes {
 	public static final IAttribute<IQuantity> IO_SOCKET_BYTES_WRITTEN = attr("bytesWritten", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_IO_SOCKET_BYTES_WRITTEN),
 			Messages.getString(Messages.ATTR_IO_SOCKET_BYTES_WRITTEN_DESC), MEMORY);
+	public static final IAttribute<IQuantity> IO_SIZE = Attribute.canonicalize(new Attribute<IQuantity>("size", //#NON-NLS-1$
+			"Size", null, MEMORY) {
+		@Override
+		public <U> IMemberAccessor<IQuantity, U> customAccessor(IType<U> type) {
+			List<IMemberAccessor<IQuantity, U>> accessorList = new ArrayList<>();
+			accessorList.add(type.getAccessor(JdkAttributes.IO_SOCKET_BYTES_READ.getKey()));
+			accessorList.add(type.getAccessor(JdkAttributes.IO_SOCKET_BYTES_WRITTEN.getKey()));
+			accessorList.add(type.getAccessor(JdkAttributes.IO_FILE_BYTES_READ.getKey()));
+			accessorList.add(type.getAccessor(JdkAttributes.IO_FILE_BYTES_WRITTEN.getKey()));
+			for (IMemberAccessor<IQuantity, U> accessor : accessorList) {
+				if (accessor != null) {
+					return accessor;
+				}
+			}
+			return MemberAccessorToolkit.constant(UnitLookup.BYTE.quantity(0));
+		}
+	});
 	public static final IAttribute<String> IO_ADDRESS = attr("address", Messages.getString(Messages.ATTR_IO_ADDRESS), //$NON-NLS-1$
 			PLAIN_TEXT);
 	public static final IAttribute<String> IO_HOST = attr("host", Messages.getString(Messages.ATTR_IO_HOST), //$NON-NLS-1$
@@ -531,6 +572,19 @@ public final class JdkAttributes {
 			MEMORY);
 	public static final IAttribute<IQuantity> ALLOCATION_SIZE = attr("allocationSize", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_ALLOCATION_SIZE), MEMORY);
+	public static final IAttribute<IQuantity> TOTAL_ALLOCATION_SIZE = Attribute.canonicalize(
+			new Attribute<IQuantity>("(totalAllocationSize)", Messages.getString(Messages.ATTR_ALLOCATION_TOTAL_SIZE), //$NON-NLS-1$
+					Messages.getString(Messages.ATTR_ALLOCATION_TOTAL_SIZE_DESC), MEMORY) {
+				@Override
+				public <U> IMemberAccessor<IQuantity, U> customAccessor(IType<U> type) {
+					if (type.getIdentifier().equals(JdkTypeIDs.ALLOC_INSIDE_TLAB)) {
+						return JdkAttributes.TLAB_SIZE.getAccessor(type);
+					} else if (type.getIdentifier().equals(JdkTypeIDs.ALLOC_OUTSIDE_TLAB)) {
+						return JdkAttributes.ALLOCATION_SIZE.getAccessor(type);
+					}
+					return null;
+				}
+			});
 	public static final IAttribute<IMCType> ALLOCATION_CLASS = attr("objectClass", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_ALLOCATION_CLASS), Messages.getString(Messages.ATTR_ALLOCATION_CLASS_DESC),
 			CLASS);
@@ -684,6 +738,18 @@ public final class JdkAttributes {
 
 	public static final IAttribute<String> FLAG_NAME = attr("name", Messages.getString(Messages.ATTR_FLAG_NAME), //$NON-NLS-1$
 			PLAIN_TEXT);
+	public static final IAttribute<Boolean> FLAG_NEW_VALUE_BOOLEAN = attr("newValue", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_FLAG_NEW_VALUE_BOOLEAN), FLAG);
+	public static final IAttribute<IQuantity> FLAG_NEW_VALUE_NUMBER = attr("newValue", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_FLAG_NEW_VALUE_NUMBER), NUMBER);
+	public static final IAttribute<String> FLAG_NEW_VALUE_TEXT = attr("newValue", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_FLAG_NEW_VALUE_TEXT), PLAIN_TEXT);
+	public static final IAttribute<Boolean> FLAG_OLD_VALUE_BOOLEAN = attr("oldValue", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_FLAG_OLD_VALUE_BOOLEAN), FLAG);
+	public static final IAttribute<IQuantity> FLAG_OLD_VALUE_NUMBER = attr("oldValue", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_FLAG_OLD_VALUE_NUMBER), NUMBER);
+	public static final IAttribute<String> FLAG_OLD_VALUE_TEXT = attr("oldValue", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_FLAG_OLD_VALUE_TEXT), PLAIN_TEXT);
 	public static final IAttribute<String> FLAG_ORIGIN = attr("origin", Messages.getString(Messages.ATTR_FLAG_ORIGIN), //$NON-NLS-1$
 			PLAIN_TEXT);
 	public static final IAttribute<IQuantity> FLAG_VALUE_NUMBER = attr("value", //$NON-NLS-1$
@@ -700,10 +766,10 @@ public final class JdkAttributes {
 	public static final IAttribute<String> DUMP_REASON_RECORDING_ID = attr("recordingId", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_DUMP_REASON_RECORDING_ID),
 			Messages.getString(Messages.ATTR_DUMP_REASON_RECORDING_ID_DESC), PLAIN_TEXT);
-	
-	public static final IAttribute<String> SHUTDOWN_REASON = attr("reason", // $NON-NLS-1$
-			Messages.getString(Messages.ATTR_SHUTDOWN_REASON),
-			Messages.getString(Messages.ATTR_SHUTDOWN_REASON_DESC), PLAIN_TEXT);
+
+	public static final IAttribute<String> SHUTDOWN_REASON = attr("reason", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_SHUTDOWN_REASON), Messages.getString(Messages.ATTR_SHUTDOWN_REASON_DESC),
+			PLAIN_TEXT);
 
 	public static final IAttribute<IQuantity> CLASSLOADER_LOADED_COUNT = attr("loadedClassCount", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_CLASSLOADER_LOADED_COUNT),
@@ -716,9 +782,9 @@ public final class JdkAttributes {
 			Messages.getString(Messages.ATTR_CLASS_DEFINING_CLASSLOADER), CLASS);
 	private static final IAttribute<IMCType> CLASS_INITIATING_CLASSLOADER_V0 = attr("initiatingClassLoader", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_CLASS_INITIATING_CLASSLOADER), CLASS);
-	private static final IAttribute<IMCType> PARENT_CLASSLOADER_V0 = attr("parentClassLoader", // $NON-NLS-1$
+	private static final IAttribute<IMCType> PARENT_CLASSLOADER_V0 = attr("parentClassLoader", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_PARENT_CLASSLOADER), CLASS);
-	private static final IAttribute<IMCType> CLASSLOADER_V0 = attr("classLoader", // $NON-NLS-1$
+	private static final IAttribute<IMCType> CLASSLOADER_V0 = attr("classLoader", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_CLASSLOADER), CLASS);
 
 	public static final IAttribute<IMCClassLoader> CLASS_DEFINING_CLASSLOADER = Attribute
@@ -863,22 +929,22 @@ public final class JdkAttributes {
 			Messages.getString(Messages.ATTR_CLASS_LOADED), CLASS);
 	public static final IAttribute<IMCType> CLASS_UNLOADED = attr("unloadedClass", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_CLASS_UNLOADED), CLASS);
-	public static final IAttribute<IMCType> CLASS_DEFINED = attr("definedClass", // $NON-NLS-1$
+	public static final IAttribute<IMCType> CLASS_DEFINED = attr("definedClass", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_CLASS_DEFINED), CLASS);
-	public static final IAttribute<IQuantity> ANONYMOUS_BLOCK_SIZE = attr("anonymousBlockSize", // $NON-NLS-1$
+	public static final IAttribute<IQuantity> ANONYMOUS_BLOCK_SIZE = attr("anonymousBlockSize", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_ANONYMOUS_BLOCK_SIZE), MEMORY);
-	public static final IAttribute<IQuantity> ANONYMOUS_CHUNK_SIZE = attr("anonymousChunkSize", // $NON-NLS-1$ 
+	public static final IAttribute<IQuantity> ANONYMOUS_CHUNK_SIZE = attr("anonymousChunkSize", //$NON-NLS-1$ 
 			Messages.getString(Messages.ATTR_ANONYMOUS_CHUNK_SIZE), MEMORY);
-	public static final IAttribute<IQuantity> ANONYMOUS_CLASS_COUNT = attr("anonymousClassCount", // $NON-NLS-1$
+	public static final IAttribute<IQuantity> ANONYMOUS_CLASS_COUNT = attr("anonymousClassCount", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_ANONYMOUS_CLASS_COUNT), NUMBER);
-	public static final IAttribute<IQuantity> BLOCK_SIZE = attr("blockSize", // $NON-NLS-1$
+	public static final IAttribute<IQuantity> BLOCK_SIZE = attr("blockSize", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_BLOCK_SIZE), MEMORY);
-	public static final IAttribute<IQuantity> CHUNK_SIZE = attr("chunkSize", // $NON-NLS-1$
+	public static final IAttribute<IQuantity> CHUNK_SIZE = attr("chunkSize", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_CHUNK_SIZE), MEMORY);
-	public static final IAttribute<IQuantity> CLASS_COUNT = attr("classCount", // $NON-NLS-1$
+	public static final IAttribute<IQuantity> CLASS_COUNT = attr("classCount", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_CLASS_COUNT), NUMBER);
-	public static final IAttribute<IQuantity> CLASS_LOADER_DATA = attr("classLoaderData", // $NON-NLS-1$
-			Messages.getString(Messages.ATTR_CLASSLOADER_DATA), ADDRESS);	
+	public static final IAttribute<IQuantity> CLASS_LOADER_DATA = attr("classLoaderData", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_CLASSLOADER_DATA), ADDRESS);
 
 	public static final IAttribute<IQuantity> COMPILER_COMPILATION_ID = attr("compileId", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_COMPILER_COMPILATION_ID), NUMBER);
@@ -1191,4 +1257,11 @@ public final class JdkAttributes {
 			CLASS);
 	public static final IAttribute<Boolean> BIASED_REVOCATION_DISABLE_BIASING = attr("disableBiasing", //$NON-NLS-1$
 			Messages.getString(Messages.ATTR_DISABLE_BIASING), FLAG);
+
+	public static final IAttribute<String> NATIVE_LIBRARY_NAME = attr("name", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_NATIVE_LIBRARY_NAME), PLAIN_TEXT);
+	public static final IAttribute<IQuantity> BASE_ADDRESS = attr("baseAddress", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_BASE_ADDRESS), ADDRESS);
+	public static final IAttribute<IQuantity> TOP_ADDRESS = attr("topAddress", //$NON-NLS-1$
+			Messages.getString(Messages.ATTR_TOP_ADDRESS), ADDRESS);
 }

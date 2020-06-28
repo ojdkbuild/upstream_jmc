@@ -55,7 +55,9 @@ public class JfrUi extends MCJemmyBase {
 	 * Members ======= List of tabs
 	 */
 	public static enum Tabs {
+		AUTOMATED_ANALYSIS_RESULTS,
 		JAVA_APPLICATION,
+		THREADS,
 		MEMORY,
 		LOCK_INSTANCES,
 		FILE_IO,
@@ -72,6 +74,7 @@ public class JfrUi extends MCJemmyBase {
 		VM_OPERATIONS,
 		ALLOCATIONS,
 		ENVIRONMENT,
+		NATIVE_LIBRARIES,
 		PROCESSES,
 		ENVIRONMENT_VARIABLES,
 		SYSTEM_PROPS,
@@ -80,6 +83,9 @@ public class JfrUi extends MCJemmyBase {
 		public static String[] text(Tabs tab) {
 			String[] tabText = {""};
 			switch (tab) {
+			case AUTOMATED_ANALYSIS_RESULTS:
+				tabText = new String[] {"Automated Analysis Results"};
+				break;
 			case JVM_INTERNALS:
 				tabText = new String[] {"JVM Internals"};
 				break;
@@ -97,6 +103,9 @@ public class JfrUi extends MCJemmyBase {
 				break;
 			case ALLOCATIONS:
 				tabText = new String[] {"JVM Internals", "TLAB Allocations"};
+				break;
+			case THREADS:
+				tabText = new String[] {"Java Application", "Threads"};
 				break;
 			case MEMORY:
 				tabText = new String[] {"Java Application", "Memory"};
@@ -140,6 +149,9 @@ public class JfrUi extends MCJemmyBase {
 			case PROCESSES:
 				tabText = new String[] {"Environment", "Processes"};
 				break;
+			case NATIVE_LIBRARIES:
+				tabText = new String[] {"Environment", "Native Libraries"};
+				break;				
 			case ENVIRONMENT_VARIABLES:
 				tabText = new String[] {"Environment", "Environment Variables"};
 				break;

@@ -34,7 +34,7 @@
 <feature
       id="org.openjdk.jmc.updatesite.ide"
       label="JDK Mission Control Site"
-      version="7.0.0">
+      version="7.1.1">
 
    <description>
       This is a release engineering internal &quot;feature&quot;. It just happen
@@ -68,10 +68,6 @@ copyright or other irrelevant stuff in here.
 
    <includes
          id="org.openjdk.jmc.feature.twitter"
-         version="0.0.0"/>
-
-   <includes
-         id="org.openjdk.jmc.feature.joverflow"
          version="0.0.0"/>
 
    <includes

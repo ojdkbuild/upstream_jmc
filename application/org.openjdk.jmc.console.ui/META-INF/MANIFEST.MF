@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Name: JMX Console
 Bundle-SymbolicName: org.openjdk.jmc.console.ui;singleton:=true
-Bundle-Version: 7.0.0.qualifier
+Bundle-Version: 7.1.1.qualifier
 Bundle-Activator: org.openjdk.jmc.console.ui.ConsolePlugin
 Bundle-Vendor: Oracle Corporation
 Bundle-Localization: plugin
@@ -20,7 +20,9 @@ Export-Package: org.openjdk.jmc.console.ui.actions;
    org.openjdk.jmc.console.ui.mbeanbrowser,
    org.openjdk.jmc.console.ui.notification",
  org.openjdk.jmc.console.ui.editor,
- org.openjdk.jmc.console.ui.editor.internal;x-friends:="org.openjdk.jmc.console.ui.mbeanbrowser,org.openjdk.jmc.rcp.intro"
+ org.openjdk.jmc.console.ui.editor.internal;x-friends:="org.openjdk.jmc.console.ui.mbeanbrowser,org.openjdk.jmc.rcp.intro",
+ org.openjdk.jmc.console.ui.messages.internal;x-friends:="org.openjdk.jmc.console.uitest",
+ org.openjdk.jmc.console.ui.preferences;x-friends:="org.openjdk.jmc.console.uitest"
 Bundle-ClassPath: .
 Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0"
