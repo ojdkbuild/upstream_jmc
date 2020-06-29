@@ -351,7 +351,7 @@
 							<doCheck>false</doCheck>
 							<doUpdate>false</doUpdate>
 							<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-							<revisionOnScmFailure>no.scm.config.in.pom</revisionOnScmFailure>
+							<revisionOnScmFailure>63ec7d0ee8d9</revisionOnScmFailure>
 						</configuration>
 					</execution>
 					<execution>
