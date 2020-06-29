@@ -21,3 +21,7 @@ workspace/
 # Ignore coverage report
 core/coverage/coverage-report
 application/coverage/coverage-report
+
+# ojdkbuild
+application/org.openjdk.jmc.rcp.product/jmc.product
+releng/platform-definitions/platform-definition-2019-09/platform-definition-2019-09.target
