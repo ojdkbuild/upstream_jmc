@@ -14,5 +14,7 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.openjdk.jmc.console.jconsole,
  com.sun.tools.jconsole
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Eclipse-BuddyPolicy: app
+Bundle-ClassPath: .,
+ external:$java.home$/../lib/jconsole.jar
+Eclipse-BuddyPolicy: app 
 Automatic-Module-Name: org.openjdk.jmc.console.jconsole
